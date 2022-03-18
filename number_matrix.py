@@ -1,5 +1,9 @@
+import os
 from Cell import Cell
 from Node import Node
+from visualize import matrix_to_img
+import math
+from json_ import export_json
 
 PLUS = 1
 MIN = 2
@@ -7,14 +11,9 @@ MUL = 3
 DIV = 4
 
 operands = (PLUS, MIN, MUL)
-n = 10
-numbers = (1, 2, 3)
+n = 20
+numbers = (1, 2, 3, 5, 10)
 
-def matrix_to_img(matrix):
-    raise NotImplementedError
-
-def matrices_to_surf(matrices):
-    raise NotImplementedError
 
 def print_calculation(Cell:Cell):
     raise NotImplementedError
@@ -169,18 +168,31 @@ def init():
 matrix = init()
 print("Init matrix:")
 print_matrix(matrix)
+dir= f"{n}_{'_'.join(operations_to_str(operands))}_{'_'.join([f'{num}' for num in numbers])}"
+dir = dir.replace("*", "MUL")
+try:
+    os.mkdir(dir)
+except FileExistsError:
+    pass
+
+matrix_to_img(matrix, n, n, math.floor(720/n), f"{dir}/0.jpg")
+export_json(matrix, f"{dir}/0.json")
 
 
 improved = True
+i = 0
 while improved:
     improved = False
     
     for key in matrix:
         cell = matrix[key]
         improved |= run(cell, matrix)
+    i+=1
+    print(i)
 
-    print_matrix(matrix)
+    # print_matrix(matrix)
+    matrix_to_img(matrix, n, n, math.floor(720/n), f"{dir}/{i}.jpg")
+    export_json(matrix, f"{dir}/{i}.json")
 
-print_matrix(matrix)
 tehoa = 5
 

@@ -6,5 +6,3 @@ class Cell:
         self.best_operation_order = None
         self.best_number_order = None
         self.best_num_operations = None
-
-        
