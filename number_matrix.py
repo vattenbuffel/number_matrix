@@ -6,9 +6,9 @@ MIN = 2
 MUL = 3
 DIV = 4
 
-operands = (PLUS, MUL)
-n = 3
-numbers = (1, 2)
+operands = (PLUS, MIN, MUL)
+n = 10
+numbers = (1, 2, 3)
 
 def matrix_to_img(matrix):
     raise NotImplementedError
@@ -40,12 +40,15 @@ def evaluate(start_num, operands, numbers):
     
 
 def run(cell:Cell, matrix):
-    print_cell(cell)
+    # print_cell(cell)
 
     if cell.end_num == cell.start_num:
         return False
 
-    def build_tree(parent:Node, max_depth, goal_val, matrix):
+    i = [0]
+    
+    def build_tree(parent:Node, max_depth, goal_val, matrix, i):
+        i[0] += 1
         depth = parent.depth + 1
         if depth == max_depth:
             return None
@@ -59,21 +62,22 @@ def run(cell:Cell, matrix):
                 if child.end_num == goal_val:
                     return child
 
-                if matrix[(child.start_num, goal_val)].best_num_operations + depth < max_depth:
+                if (child.start_num, goal_val) in matrix and matrix[(child.start_num, goal_val)].best_num_operations + depth < max_depth:
                     child.end_cell = matrix[(child.start_num, goal_val)]
                     return child
                 
         
         for child in parent.children:
-            if build_tree(child, max_depth, goal_val, matrix) is not None:
-                return child
+            best_child = build_tree(child, max_depth, goal_val, matrix, i)
+            if best_child is not None:
+                return best_child
         
         return None
     
 
     node = Node(cell.start_num, 0, None, None, None)
     node.end_num = cell.start_num
-    best_child = build_tree(node, cell.best_num_operations, cell.end_num, matrix)
+    best_child = build_tree(node, cell.best_num_operations, cell.end_num, matrix, i)
 
     if best_child is None:
         return False
@@ -174,6 +178,8 @@ while improved:
     for key in matrix:
         cell = matrix[key]
         improved |= run(cell, matrix)
+
+    print_matrix(matrix)
 
 print_matrix(matrix)
 tehoa = 5
